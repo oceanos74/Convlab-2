@@ -1,6 +1,6 @@
 def default_state():
-    state = dict(user_action=[],
-                 system_action=[],
+    state = dict(user_action={},
+                 system_action={},
                  belief_state={},
                  request_state={},
                  terminated=False,
