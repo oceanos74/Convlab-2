@@ -492,7 +492,7 @@ class LaRL(Policy):
 
         # mark_not_mentioned(prev_state)
         #active_domain = self.get_active_domain_convlab(self.prev_active_domain, prev_bstate, bstate)
-        active_domain = self.get_active_domain_convlab(self.prev_active_domain, prev_bstate, bstate)
+        active_domain = self.get_active_domain(self.prev_active_domain, prev_bstate, bstate)
         print(active_domain)
         domain_mark_not_mentioned(bstate, active_domain)
 
