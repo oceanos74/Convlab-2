@@ -65,7 +65,13 @@ class RuleBasedMultiwozBot(Policy):
         DA = {}
 
         if 'user_action' in state and (len(state['user_action']) > 0):
-            user_action = state['user_action']
+            user_action = {}
+            for da in state['user_action']:
+                i, d, s, v = da
+                k = '-'.join((d, i))
+                if k not in user_action:
+                    user_action[k] = []
+                    user_action[k].append([s, v])
         else:
             user_action = check_diff(self.last_state, state)
 
@@ -133,9 +139,12 @@ class RuleBasedMultiwozBot(Policy):
             DA = {'general-greet': [['none', 'none']]}
         tuples = []
         for domain_intent, svs in DA.items():
-            for slot, value in svs:
-                domain, intent = domain_intent.split('-')
-                tuples.append([intent, domain, slot, value])
+            domain, intent = domain_intent.split('-')
+            if not svs:
+                tuples.append([intent, domain, 'none', 'none'])
+            else:
+                for slot, value in svs:
+                    tuples.append([intent, domain, slot, value])
         state['system_action'] = tuples
         return tuples
 

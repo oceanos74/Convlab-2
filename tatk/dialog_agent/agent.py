@@ -85,34 +85,39 @@ class PipelineAgent(Agent):
         self.dst = dst
         self.policy = policy
         self.nlg = nlg
+        self.history = []
         self.init_session()
 
     def response(self, observation):
         """Generate agent response using the agent modules."""
-        self.dst.state['history'].append(['opponent', observation])
+        if self.dst is not None:
+            self.dst.state['history'].append(['opponent', observation])
+        self.history.append(['opponent', observation])
 
         # get dialog act
         if self.nlu is not None:
             self.input_action = self.nlu.predict(observation, context=[x[1] for x in self.history[:-1]])
         else:
             self.input_action = observation
-
+        # print(self.input_action)
         # get state
         if self.dst is not None:
             state = self.dst.update(self.input_action)
         else:
             state = self.input_action
-
+        # print(state)
         # get action
         self.output_action = self.policy.predict(state)
-
+        # print(self.output_action)
         # get model response
         if self.nlg is not None:
             model_response = self.nlg.generate(self.output_action)
         else:
             model_response = self.output_action
-
-        self.dst.state['history'].append([self.name, model_response])
+        # print(model_response)
+        if self.dst is not None:
+            self.dst.state['history'].append([self.name, model_response])
+        self.history.append([self.name, observation])
         return model_response
 
     def is_terminated(self):
